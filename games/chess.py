@@ -101,8 +101,11 @@ def chess_loop(screen):
                 return False
             self.field[row][col] = None  # Снять фигуру.
             piece.is_moved_once = True
+            if self.field[row1][col1]:
+                self.field[row1][col1].sprite.kill()
             self.field[row1][col1] = piece  # Поставить на новое место.
-            piece.move_sprite(*board_to_window_coords(col1, row1))
+            new_sprite_coords = board_to_window_coords(col1, row1)
+            piece.move_sprite(new_sprite_coords[0] + 5, new_sprite_coords[1] + 5)
             self.color = opponent(self.color)
             return True
 
