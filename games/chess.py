@@ -8,27 +8,6 @@ WHITE = "white"
 BLACK = "black"
 
 
-# def draw_board(screen, board_width, square_width, indent=None):
-#     if indent is None:
-#         indent = (630 - board_width) // 2
-#     screen.fill((0, 0, 0))
-#     pygame.draw.rect(screen, pygame.Color("#71320F"),
-#                      (indent, indent, board_width, board_width))
-#     # изначальная заливка тёмная, рисует светлые квадраты
-#     for y in range(board_width + indent - square_width, -1 + indent,
-#                    -square_width):
-#         for x in range(indent, board_width + indent, square_width):
-#             f = 1 if (8 % 2 == 1) else 0
-#             if (y // square_width) % 2 == 0:
-#                 if (x // square_width) % 2 == (not f):
-#                     continue
-#             else:
-#                 if (x // square_width) % 2 == f:
-#                     continue
-#             screen.fill(
-#                 pygame.Color("#EFD2AA"), (x, y, square_width, square_width))
-
-
 def chess_loop(screen):
     """screen -- тот, на котором обычно рисуем """
 
@@ -88,15 +67,7 @@ def chess_loop(screen):
                 return False
             if piece.get_color() != self.color:
                 return False
-            # if self.field[row1][col1] is None:
-            #     if not piece.can_move(self, row, col, row1, col1):
-            #         return False
-            # elif self.field[row1][col1].get_color() == opponent(
-            #         piece.get_color()):
-            #     if not piece.can_attack(self, row, col, row1, col1):
-            #         return False
-            # else:
-            #     return False
+
             if not piece.can_move(self, row, col, row1, col1):
                 return False
             self.field[row][col] = None  # Снять фигуру.
@@ -110,7 +81,7 @@ def chess_loop(screen):
             return True
 
         def is_under_attack(self, row1, col1, color):
-            """проверяются все возможные ходы для всех фигур нужного цвета"""
+            """Проверяются все возможные ходы для всех фигур нужного цвета"""
             i1 = 0
             for i in self.field:
                 j1 = 0
@@ -202,7 +173,6 @@ def chess_loop(screen):
 
         def can_move(self, board, row, col, row1, col1,
                      is_THIS_piece_moving=True):
-            print(f"{row, col, row1, col1=}")
             if self.can_attack(board, row, col, row1, col1):
                 return True
 
@@ -603,7 +573,6 @@ def chess_loop(screen):
                 all_figures.draw(screen)
                 coords = window_pos_to_board(*event.pos)
                 if coords is not None:
-                    print(coords)
                     if not any_piece_chosen:
                         piece = board.field[coords[1]][coords[0]]
                         chosen_piece = piece
@@ -617,16 +586,13 @@ def chess_loop(screen):
                                     if piece.can_move(board, coords[1],
                                                       coords[0],
                                                       j, i):
-                                        pygame.draw.rect(
+                                        wnd_coords = board_to_window_coords(i,
+                                                                            j)
+                                        pygame.draw.circle(
                                             screen, (50, 150, 50, 50),
-                                            (
-                                            *board_to_window_coords(i, j), 70,
-                                            70
-                                            ))
+                                            (wnd_coords[0] + 35,
+                                             wnd_coords[1] + 35), 10)
                                         cells_to_move.append((i, j))
-                            print(any_piece_chosen, coords,
-                                  piece.get_color() +
-                                  piece.char())
                     else:
                         piece = board.field[coords[1]][coords[0]]
                         if coords not in cells_to_move:
@@ -635,23 +601,7 @@ def chess_loop(screen):
                             cells_to_move = []
                             continue
                         if piece is not None:
-                            if piece.color == chosen_piece.color:
-                                chosen_piece = piece
-                                piece_cell = (coords[1], coords[0])
-                                cells_to_move = []
-                                for i in range(len(board.field)):
-                                    for j in range(len(board.field[i])):
-                                        if piece.can_move(board, coords[1],
-                                                          coords[0],
-                                                          j, i):
-                                            pygame.draw.rect(
-                                                screen, (50, 150, 50, 50),
-                                                (
-                                                *board_to_window_coords(i, j),
-                                                70, 70
-                                                ))
-                                            cells_to_move.append((i, j))
-                            elif piece.color != chosen_piece.color:
+                            if piece.color != chosen_piece.color:
                                 if coords in cells_to_move:
                                     board.move_piece(*piece_cell, coords[1],
                                                      coords[0])
@@ -665,9 +615,6 @@ def chess_loop(screen):
                                 any_piece_chosen = False
                                 chosen_piece = None
                                 cells_to_move = []
-
-                    print(coords, any_piece_chosen)
-                print(cells_to_move)
         if not any_piece_chosen:
             draw_board(screen, 560, 70)
         all_figures.draw(screen)
