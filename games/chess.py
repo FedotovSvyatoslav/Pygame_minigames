@@ -102,6 +102,7 @@ def chess_loop(screen):
             self.field[row][col] = None  # Снять фигуру.
             piece.is_moved_once = True
             self.field[row1][col1] = piece  # Поставить на новое место.
+            piece.move_sprite(*board_to_window_coords(col1, row1))
             self.color = opponent(self.color)
             return True
 
@@ -181,6 +182,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def get_color(self):
             return self.color
@@ -232,6 +241,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def set_position(self, row, col):
             self.row = row
@@ -296,6 +313,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def get_color(self):
             return self.color
@@ -348,6 +373,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def set_position(self, row, col):
             self.row = row
@@ -379,6 +412,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def set_position(self, row, col):
             self.row = row
@@ -417,6 +458,14 @@ def chess_loop(screen):
         def __init__(self, color, is_moved_once=False):
             self.color = color
             self.is_moved_once = is_moved_once
+            self.sprite = None
+
+        def set_sprite(self, sprite):
+            self.sprite = sprite
+
+        def move_sprite(self, x, y):
+            self.sprite.rect.x = x
+            self.sprite.rect.y = y
 
         def set_position(self, row, col):
             self.row = row
@@ -435,11 +484,14 @@ def chess_loop(screen):
             if is_THIS_piece_moving:
                 if board.is_under_attack(row1, col1, opponent(self.color)):
                     return False
-            if (abs(col1 - col) == abs(row1 - row) == 1) and (board.field[row1][col1] is None):
+            if (abs(col1 - col) == abs(row1 - row) == 1) and (
+                    board.field[row1][col1] is None):
                 return True
-            if abs(col - col1) == 1 and row == row1 and board.field[row1][col1] is None:
+            if abs(col - col1) == 1 and row == row1 and board.field[row1][
+                col1] is None:
                 return True
-            if abs(row - row1) == 1 and col == col1 and board.field[row1][col1] is None:
+            if abs(row - row1) == 1 and col == col1 and board.field[row1][
+                col1] is None:
                 return True
             return False
 
@@ -496,42 +548,23 @@ def chess_loop(screen):
         wnd_y = y * 70 + indent
         return wnd_x, wnd_y
 
-    # for x in range((630 - 560) // 2, 560 + (630 - 560) // 2, 70):  # white pawns
-    #     FigureSprite("data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow"
-    #                  "/128h/w_pawn_png_128px.png", x + 5, 425 + (630 - 560) // 2)
-    # for x in range((630 - 560) // 2, 560 + (630 - 560) // 2, 70):  # black pawns
-    #     FigureSprite("data/JohnPablok_Cburnett_Chess_set/PNGs/No_"
-    #                  "shadow/128h/b_pawn_png_128px.png", x + 5, 75 + (630 - 560) // 2)
-
     any_piece_chosen = False
     chosen_piece = None
     piece_cell = None
 
     board = Board()
-    b_b_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_bishop_png_128px.png"
-    b_k_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_king_png_128px.png"
-    b_n_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_knight_png_128px.png"
-    b_p_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_pawn_png_128px.png"
-    b_q_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_queen_png_128px.png"
-    b_r_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/b_rook_png_128px.png"
-    w_b_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_bishop_png_128px.png"
-    w_k_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_king_png_128px.png"
-    w_n_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_knight_png_128px.png"
-    w_p_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_pawn_png_128px.png"
-    w_q_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_queen_png_128px.png"
-    w_r_im_name = "data/JohnPablok_Cburnett_Chess_set/PNGs/No_shadow" \
-                  "/128h/w_rook_png_128px.png"
+    b_b_im_name = "data/b_bishop_png_128px.png"
+    b_k_im_name = "data/b_king_png_128px.png"
+    b_n_im_name = "data/b_knight_png_128px.png"
+    b_p_im_name = "data/b_pawn_png_128px.png"
+    b_q_im_name = "data/b_queen_png_128px.png"
+    b_r_im_name = "data/b_rook_png_128px.png"
+    w_b_im_name = "data/w_bishop_png_128px.png"
+    w_k_im_name = "data/w_king_png_128px.png"
+    w_n_im_name = "data/w_knight_png_128px.png"
+    w_p_im_name = "data/w_pawn_png_128px.png"
+    w_q_im_name = "data/w_queen_png_128px.png"
+    w_r_im_name = "data/w_rook_png_128px.png"
 
     figure_images = {
         "bB": b_b_im_name,
@@ -552,8 +585,10 @@ def chess_loop(screen):
             piece = board.field[i][j]
             wnd_coords = board_to_window_coords(j, i)
             if piece is not None:
-                FigureSprite(figure_images[board.cell(i, j)],
-                             wnd_coords[0] + 5, wnd_coords[1] + 5)
+                sprite = FigureSprite(figure_images[board.cell(i, j)],
+                                      wnd_coords[0] + 5, wnd_coords[1] + 5)
+                piece.set_sprite(sprite)
+
     cells_to_move = []
     while True:
         for event in pygame.event.get():
@@ -576,14 +611,18 @@ def chess_loop(screen):
                             cells_to_move = []
                             for i in range(len(board.field)):
                                 for j in range(len(board.field[i])):
-                                    if piece.can_move(board, coords[1], coords[0],
+                                    if piece.can_move(board, coords[1],
+                                                      coords[0],
                                                       j, i):
                                         pygame.draw.rect(
                                             screen, (50, 150, 50, 50),
-                                            (*board_to_window_coords(i, j), 70, 70
-                                             ))
+                                            (
+                                            *board_to_window_coords(i, j), 70,
+                                            70
+                                            ))
                                         cells_to_move.append((i, j))
-                            print(any_piece_chosen, coords, piece.get_color() +
+                            print(any_piece_chosen, coords,
+                                  piece.get_color() +
                                   piece.char())
                     else:
                         piece = board.field[coords[1]][coords[0]]
@@ -599,16 +638,20 @@ def chess_loop(screen):
                                 cells_to_move = []
                                 for i in range(len(board.field)):
                                     for j in range(len(board.field[i])):
-                                        if piece.can_move(board, coords[1], coords[0],
+                                        if piece.can_move(board, coords[1],
+                                                          coords[0],
                                                           j, i):
                                             pygame.draw.rect(
                                                 screen, (50, 150, 50, 50),
-                                                (*board_to_window_coords(i, j), 70, 70
-                                                 ))
+                                                (
+                                                *board_to_window_coords(i, j),
+                                                70, 70
+                                                ))
                                             cells_to_move.append((i, j))
                             elif piece.color != chosen_piece.color:
                                 if coords in cells_to_move:
-                                    board.move_piece(*piece_cell, coords[1], coords[0])
+                                    board.move_piece(*piece_cell, coords[1],
+                                                     coords[0])
                                     any_piece_chosen = False
                                     chosen_piece = None
                                     cells_to_move = []
