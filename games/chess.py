@@ -22,6 +22,8 @@ def chess_loop(screen):
     class Board:
         def __init__(self):
             self.color = WHITE
+            self.w_figures_dead_count = 0
+            self.b_figures_dead_count = 0
             self.field = []
             for row in range(8):
                 self.field.append([None] * 8)
@@ -73,7 +75,23 @@ def chess_loop(screen):
             self.field[row][col] = None  # Снять фигуру.
             piece.is_moved_once = True
             if self.field[row1][col1]:
-                self.field[row1][col1].sprite.kill()
+                if self.field[row1][col1].color == WHITE:
+                    self.field[row1][col1].sprite.image = \
+                        pygame.transform.scale(
+                            self.field[row1][col1].sprite.image, (20, 20))
+                    self.field[row1][col1].sprite.move(
+                        (630 - 560) // 2 + 570 + self.w_figures_dead_count
+                        * 20, 575)
+                    self.w_figures_dead_count += 1
+                else:
+                    self.field[row1][col1].sprite.image = \
+                        pygame.transform.scale(
+                            self.field[row1][col1].sprite.image, (20, 20))
+                    self.field[row1][col1].sprite.move(
+                        (630 - 560) // 2 + 570 + self.b_figures_dead_count
+                        * 20, 45)
+                    self.b_figures_dead_count += 1
+                # self.field[row1][col1].sprite.kill()
             self.field[row1][col1] = piece  # Поставить на новое место.
             new_sprite_coords = board_to_window_coords(col1, row1)
             piece.move_sprite(new_sprite_coords[0] + 5, new_sprite_coords[1] + 5)
@@ -478,6 +496,9 @@ def chess_loop(screen):
             self.image = pygame.transform.scale(self.image, (60, 60))
             self.rect = pygame.Rect((x, y, 70, 70))
 
+        def move(self, x, y):
+            self.rect.x, self.rect.y = x, y
+
     screen_rect = screen.get_rect()
     screen_copy = pygame.Surface((screen_rect.w, screen_rect.h))
     screen_copy.blit(screen, (0, 0))
@@ -526,18 +547,18 @@ def chess_loop(screen):
     piece_cell = None
 
     board = Board()
-    b_b_im_name = "data/b_bishop_png_128px.png"
-    b_k_im_name = "data/b_king_png_128px.png"
-    b_n_im_name = "data/b_knight_png_128px.png"
-    b_p_im_name = "data/b_pawn_png_128px.png"
-    b_q_im_name = "data/b_queen_png_128px.png"
-    b_r_im_name = "data/b_rook_png_128px.png"
-    w_b_im_name = "data/w_bishop_png_128px.png"
-    w_k_im_name = "data/w_king_png_128px.png"
-    w_n_im_name = "data/w_knight_png_128px.png"
-    w_p_im_name = "data/w_pawn_png_128px.png"
-    w_q_im_name = "data/w_queen_png_128px.png"
-    w_r_im_name = "data/w_rook_png_128px.png"
+    b_b_im_name = "games/data/b_bishop_png_128px.png"
+    b_k_im_name = "games/data/b_king_png_128px.png"
+    b_n_im_name = "games/data/b_knight_png_128px.png"
+    b_p_im_name = "games/data/b_pawn_png_128px.png"
+    b_q_im_name = "games/data/b_queen_png_128px.png"
+    b_r_im_name = "games/data/b_rook_png_128px.png"
+    w_b_im_name = "games/data/w_bishop_png_128px.png"
+    w_k_im_name = "games/data/w_king_png_128px.png"
+    w_n_im_name = "games/data/w_knight_png_128px.png"
+    w_p_im_name = "games/data/w_pawn_png_128px.png"
+    w_q_im_name = "games/data/w_queen_png_128px.png"
+    w_r_im_name = "games/data/w_rook_png_128px.png"
 
     figure_images = {
         "bB": b_b_im_name,
@@ -553,14 +574,17 @@ def chess_loop(screen):
         "wQ": w_q_im_name,
         "wR": w_r_im_name
     }
-    for i in range(len(board.field)):
-        for j in range(len(board.field[i])):
-            piece = board.field[i][j]
-            wnd_coords = board_to_window_coords(j, i)
-            if piece is not None:
-                sprite = FigureSprite(figure_images[board.cell(i, j)],
-                                      wnd_coords[0] + 5, wnd_coords[1] + 5)
-                piece.set_sprite(sprite)
+
+    def create_sprites():
+        for i in range(len(board.field)):
+            for j in range(len(board.field[i])):
+                piece = board.field[i][j]
+                wnd_coords = board_to_window_coords(j, i)
+                if piece is not None:
+                    sprite = FigureSprite(figure_images[board.cell(i, j)],
+                                          wnd_coords[0] + 5, wnd_coords[1] + 5)
+                    piece.set_sprite(sprite)
+    create_sprites()
 
     cells_to_move = []
     while True:
@@ -568,6 +592,15 @@ def chess_loop(screen):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+                if event.key == 13:
+                    print('123132')
+                    for sp in all_figures:
+                        sp.kill()
+                    board = Board()
+                    create_sprites()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 draw_board(screen, 560, 70)
                 all_figures.draw(screen)
@@ -620,6 +653,6 @@ def chess_loop(screen):
         all_figures.draw(screen)
         pygame.display.flip()
 
-
-screen = pygame.display.set_mode((1120, 630))
-chess_loop(screen)
+#
+# screen = pygame.display.set_mode((1120, 630))
+# chess_loop(screen)
