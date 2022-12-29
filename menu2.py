@@ -2,14 +2,11 @@ import pygame
 import sys
 import os
 import dice
-import menu2
 
-pygame.init()
-FPS = 50
-SIZE = WIDTH, HEIGHT = 1120, 630
-screen = pygame.display.set_mode(SIZE)
+
 buttons = pygame.sprite.Group()
 clock = pygame.time.Clock()
+FPS = 50
 
 
 def load_image(name):
@@ -29,40 +26,40 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = pos[0]
         self.rect.y = pos[1]
-
+    
     def click(self, pos):
         if self.rect.collidepoint(pos[0], pos[1]):
             return True
         return  False
 
 
-def terminate():
-    pygame.quit()
-    sys.exit()
 
-
-def start_screen():
-    fon = pygame.transform.scale(load_image("bg.png"), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
-    button_play = Button((700, 300), "play.png", (300, 200))
-    button_info = Button((950, 500), "info.png", (100, 100))
-    
+def menu2(screen):
+    screen.fill((0, 0, 0))
+    text = "Выберете игру"
+    font = pygame.font.Font(None, 70)
+    string_render = font.render(text, 1, pygame.Color("White"))
+    intro_rect = string_render.get_rect()
+    intro_rect.x = 400
+    intro_rect.top = 20
+    screen.blit(string_render, intro_rect)
+    dice_icon = Button((0, 315), "dice.png", (560, 315))
+    chess_icon = Button((560, 50), "chess.png", (560, 315))
+    voll_icon = Button((0, 30), "voleyball.png", (560, 315))
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if button_play.click(event.pos):
-                    menu2.menu2(screen)
+                if dice_icon.click(event.pos):
+                    #dice.start_game(screen)
                     return
-                if button_info.click(event.pos):
-                    menu2.info()
-                    return
-                    
+                if chess_icon.click(event.pos):
+                    pass  # сюда впиши функцию активации игры
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
 
 
-
-start_screen()
+def info():
+    pass
