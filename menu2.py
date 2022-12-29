@@ -9,6 +9,11 @@ clock = pygame.time.Clock()
 FPS = 50
 
 
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+
 def load_image(name):
     fullname = os.path.join('data', name)
     # если файл не существует, то выходим
@@ -33,7 +38,6 @@ class Button(pygame.sprite.Sprite):
         return  False
 
 
-
 def menu2(screen):
     screen.fill((0, 0, 0))
     text = "Выберете игру"
@@ -52,10 +56,12 @@ def menu2(screen):
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if dice_icon.click(event.pos):
+                    pass
                     #dice.start_game(screen)
-                    return
                 if chess_icon.click(event.pos):
                     pass  # сюда впиши функцию активации игры
+                if voll_icon.click(event.pos):
+                    pass
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
