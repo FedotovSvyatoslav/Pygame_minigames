@@ -3,6 +3,8 @@ import sys
 import os
 import dice
 
+# import games.chess
+
 
 buttons = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -59,7 +61,8 @@ def menu2(screen):
                     pass
                     #dice.start_game(screen)
                 if chess_icon.click(event.pos):
-                    pass  # сюда впиши функцию активации игры
+                    # games.chess.chess_loop(screen)
+                    pass  # этот pass щас нужен, потом удалить
                 if voll_icon.click(event.pos):
                     pass
         buttons.draw(screen)
