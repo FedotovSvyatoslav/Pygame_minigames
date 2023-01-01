@@ -119,11 +119,13 @@ def start_game(screen):
                     text_manager.remove_text("score1")
                     if point == 1:
                         game.point_1 = game.save_1 - 1
+                        game.turn = 1
                     text_manager.add_text(f"{game.point_1 + point}", (0, 0, 0), 70, 140, 50, "score1")
                     game.point_1 += point
                 else:
                     if point == 1:
                         game.point_2 = game.save_2 - 1
+                        game.turn = 0
                     text_manager.remove_text("score2")
                     text_manager.add_text(f"{game.point_2 + point}", (0, 0, 0), 70, 830, 50, "score2")
                     game.point_2 += point
@@ -134,7 +136,7 @@ def start_game(screen):
         text_manager.update()
         all_sprites.draw(screen)
         all_sprites.update()
-        if game.point_1 >= 100:
+        if game.point_1 >= 10:
             round_is_play = False
             text_manager.add_text("Игрок 1 победил", (0, 0, 0 ), 50, 430, 300, "win")
             play_btn = Button((510, 200), "play2.png", (170, 100), all_sprites)
@@ -144,8 +146,10 @@ def start_game(screen):
             game.save_1 = 0
             text_manager.remove_text("score1")
             text_manager.add_text(f"{0}", (0, 0, 0), 70, 140, 50, "score1")
+            text_manager.remove_text("score2")
+            text_manager.add_text(f"{0}", (0, 0, 0), 70, 830, 50, "score2")
             dice.round_ended = False
-        elif game.point_2 >= 100:
+        elif game.point_2 >= 10:
             round_is_play = False
             text_manager.add_text("Игрок  победил", (0, 0, 0), 50, 430, 300, "win")
             play_btn = Button((490, 200), "play2.png", (170, 100), all_sprites)
@@ -153,6 +157,8 @@ def start_game(screen):
             game.point_2 = 0
             game.save_2 = 0
             game.save_1 = 0
+            text_manager.remove_text("score1")
+            text_manager.add_text(f"{0}", (0, 0, 0), 70, 140, 50, "score1")
             text_manager.remove_text("score2")
             text_manager.add_text(f"{0}", (0, 0, 0), 70, 830, 50, "score2")
             dice.round_ended = False
