@@ -547,18 +547,18 @@ def chess_loop(screen):
     piece_cell = None
 
     board = Board()
-    b_b_im_name = "games/data/b_bishop_png_128px.png"
-    b_k_im_name = "games/data/b_king_png_128px.png"
-    b_n_im_name = "games/data/b_knight_png_128px.png"
-    b_p_im_name = "games/data/b_pawn_png_128px.png"
-    b_q_im_name = "games/data/b_queen_png_128px.png"
-    b_r_im_name = "games/data/b_rook_png_128px.png"
-    w_b_im_name = "games/data/w_bishop_png_128px.png"
-    w_k_im_name = "games/data/w_king_png_128px.png"
-    w_n_im_name = "games/data/w_knight_png_128px.png"
-    w_p_im_name = "games/data/w_pawn_png_128px.png"
-    w_q_im_name = "games/data/w_queen_png_128px.png"
-    w_r_im_name = "games/data/w_rook_png_128px.png"
+    b_b_im_name = "data/b_bishop_128px.png"
+    b_k_im_name = "data/b_king_128px.png"
+    b_n_im_name = "data/b_knight_128px.png"
+    b_p_im_name = "data/b_pawn_128px.png"
+    b_q_im_name = "data/b_queen_128px.png"
+    b_r_im_name = "data/b_rook_128px.png"
+    w_b_im_name = "data/w_bishop_128px.png"
+    w_k_im_name = "data/w_king_128px.png"
+    w_n_im_name = "data/w_knight_128px.png"
+    w_p_im_name = "data/w_pawn_128px.png"
+    w_q_im_name = "data/w_queen_128px.png"
+    w_r_im_name = "data/w_rook_128px.png"
 
     figure_images = {
         "bB": b_b_im_name,
@@ -594,9 +594,10 @@ def chess_loop(screen):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    screen.fill((0, 0, 0))
+                    screen.blit(screen_copy, (0, 0))
                     return
                 if event.key == 13:
-                    print('123132')
                     for sp in all_figures:
                         sp.kill()
                     board = Board()
