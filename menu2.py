@@ -1,7 +1,8 @@
 import pygame
-import dice
+from games import dice
 import games
-from useful import Button, load_image, terminate
+from games import pong
+from useful import Button, terminate
 
 
 buttons = pygame.sprite.Group()
@@ -20,6 +21,7 @@ def menu2(screen):
     screen.blit(string_render, intro_rect)
     dice_icon = Button((0, 315), "dice.png", (560, 315), buttons)
     chess_icon = Button((560, 50), "chess.png", (560, 315), buttons)
+    pong_icon = Button((560, 360), "pong.png", (500, 180), buttons)
     voll_icon = Button((0, 30), "voleyball.png", (560, 315), buttons)
     while True:
         for event in pygame.event.get():
@@ -27,11 +29,14 @@ def menu2(screen):
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if dice_icon.click(event.pos):
-                    dice.start_game(screen)
+                    games.dice.start_game(screen)
                 if chess_icon.click(event.pos):
                     games.chess_loop(screen)
                 if voll_icon.click(event.pos):
                     pass
+                if pong_icon.click(event.pos):
+                    pong.start_game(screen)
+
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)

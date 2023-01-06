@@ -16,7 +16,8 @@ def load_image(name):
 class Button(pygame.sprite.Sprite):
     def __init__(self, pos, img, size, spritegroup):
         super().__init__(spritegroup)
-        self.image = pygame.transform.scale(load_image(img), size)
+        img = load_image(img)
+        self.image = pygame.transform.scale(img, size)
         self.rect = self.image.get_rect()
         self.killed = False
         self.rect.x = pos[0]

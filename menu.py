@@ -1,5 +1,6 @@
 import pygame
 import menu2
+import useful
 from useful import Button, load_image, terminate
 
 pygame.init()
@@ -15,8 +16,8 @@ def start_screen():
     screen.blit(fon, (0, 0))
     button_play = Button((700, 300), "play.png", (300, 200), buttons)
     button_info = Button((950, 500), "info.png", (100, 100), buttons)
-    
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -27,7 +28,7 @@ def start_screen():
                 if button_info.click(event.pos):
                     menu2.info()
                     return
-                    
+
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)

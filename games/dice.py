@@ -1,7 +1,7 @@
 import pygame
 import sys
 import random
-
+import menu2
 import useful
 from useful import load_image, terminate, Button, Text
 
@@ -79,20 +79,38 @@ def start_game(screen):
     text_manager.add_text("Очки игрока 2", (0, 0, 0), 70, 720, 10, "txt2")
     text_manager.add_text("0", (0, 0, 0), 70, 140, 50, "score1")
     text_manager.add_text("0", (0, 0, 0), 70, 830, 50, "score2")
+
     global dice
     dice = Dice("dice_anim.png", 16, 9)
     clock = pygame.time.Clock()
     game = Game()
+    exit_btn = useful.Text_Button("Назад", (1060, 0), 20, screen)
     round_is_play = False
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    running = False
+                    round_is_play = False
+                    dice.kill()
+                    menu2.menu2(screen)
+                    dice_group.empty()
+                    all_sprites.empty()
+                    terminate()
                     screen.fill((0, 0, 0))
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_btn.click(event.pos):
+                    running = False
+                    round_is_play = False
+                    dice.kill()
+                    menu2.menu2(screen)
+                    dice_group.empty()
+                    all_sprites.empty()
+                    break
                 if play_btn.click(event.pos):
                     round_is_play = True
                     dice.round_ended = False
@@ -140,6 +158,7 @@ def start_game(screen):
         text_manager.update()
         all_sprites.draw(screen)
         all_sprites.update()
+        exit_btn.show()
         if game.point_1 >= 100:
             round_is_play = False
             text_manager.add_text("Игрок 1 победил", (0, 0, 0 ), 50, 430, 300, "win")
