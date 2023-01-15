@@ -466,6 +466,7 @@ def space_invaders_loop(screen):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    screen.fill((0, 0, 0))
                     return
                 if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                     hero2.move(event.key)
