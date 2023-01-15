@@ -10,7 +10,7 @@ def space_invaders_loop(screen):
     RED = pygame.Color('red')
     GREEN = pygame.Color('green')
 
-    with open("games/data/space_invaders_levels.txt", 'rt') as levels_file:
+    with open("data/space_invaders_levels.txt", 'rt') as levels_file:
         data = levels_file.readlines()
         levels = [[j.split(",") for j in i.strip('\n').split(";")]
                   for i in data]
@@ -89,7 +89,7 @@ def space_invaders_loop(screen):
         screen.blit(text2, (885, 10))
 
     def get_enemy_image(difficulty):
-        black = pygame.color.Color((0, 0, 0))
+        black = pygame.Color("black")
         if difficulty == '0':
             image = pygame.Surface((33, 24))
             image.fill(black)
@@ -341,5 +341,3 @@ def space_invaders_loop(screen):
         draw_heroes_hp()
         all_sprites.draw(screen)
         pygame.display.flip()
-
-# space_invaders_loop(pygame.display.set_mode((1120, 630)))

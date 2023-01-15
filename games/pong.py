@@ -111,17 +111,20 @@ def start_game(screen):
                 if event.key == pygame.K_ESCAPE:
                     running = False
                     round_is_play = False
-                    ball.kill()
-                    menu2.menu2(screen)
+                    try:
+                        ball.kill()
+                    except Exception:
+                        pass
                     ball_group.empty()
                     border1.kill()
                     border2.kill()
                     border_sprites.empty()
-                    useful.terminate()
                     screen.fill((0, 0, 0))
+                    menu2.menu2(screen)
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_btn.click(event.pos):
+                    time.sleep(0.5)
                     round_is_run = True
                     game.round_ended = False
                     text_manager.remove_text("win")
