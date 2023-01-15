@@ -52,7 +52,8 @@ def menu2(screen):
                 if pong_icon.click(event.pos):
                     pong.start_game(screen)
                 if space_icon.click(event.pos):
-                    space_invaders.space_invaders_loop(screen)
+                    # space_invaders.space_invaders_loop(screen)
+                    pass
 
         buttons.draw(screen)
         pygame.display.flip()
