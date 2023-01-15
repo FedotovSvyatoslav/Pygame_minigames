@@ -1,3 +1,5 @@
+import copy
+import random
 import sys
 
 import pygame
@@ -6,16 +8,18 @@ pygame.init()
 
 
 def space_invaders_loop(screen):
+    back_to_menu = False
     BLUE = pygame.Color('blue')
     RED = pygame.Color('red')
     GREEN = pygame.Color('green')
+    FONT = pygame.font.Font("../data/DePixelHalbfett.otf", 30)
 
-    with open("data/space_invaders_levels.txt", 'rt') as levels_file:
+    with open("../data/space_invaders_levels.txt", 'rt') as levels_file:
         data = levels_file.readlines()
         levels = [[j.split(",") for j in i.strip('\n').split(";")]
                   for i in data]
     last_level = levels[-1]
-    current_level = 9
+    current_level = -1
 
     class EnemyGroup(pygame.sprite.Group):
         def __init__(self):
@@ -74,22 +78,31 @@ def space_invaders_loop(screen):
         pygame.draw.rect(screen, GREEN, (250, 610, 620, 5))
 
     def draw_heroes_hp():
-        font = pygame.font.Font("games/data/DePixelHalbfett.otf", 32)
-
-        text1 = font.render('P1   LIVES:', True, RED)
+        text1 = FONT.render('P1   LIVES:', False, RED)
         screen.blit(text1, (10, 10))
-        for i in range(10, 10 + hero2.live_count * 45 +
-                           (hero2.live_count - 1) * 10, 55):
+        for i in range(10, 10 + hero1.live_count * 45 +
+                           (hero1.live_count - 1) * 10, 55):
             screen.blit(get_hero_image(RED), (i, 50))
 
-        text2 = font.render("P2   LIVES:", True, BLUE)
-        for i in range(885, 885 + hero1.live_count * 45 +
+        text2 = FONT.render("P2   LIVES:", False, BLUE)
+        for i in range(885, 885 + hero2.live_count * 45 +
                             (hero2.live_count - 1) * 10, 55):
             screen.blit(get_hero_image(BLUE), (i, 50))
         screen.blit(text2, (885, 10))
 
+    def draw_score():
+        score1 = FONT.render("SCORE:", False, RED)
+        score_value1 = FONT.render(f"{hero1.score}", False, RED)
+        screen.blit(score1, (10, 500))
+        screen.blit(score_value1, (10, 550))
+
+        score2 = FONT.render("SCORE:", False, BLUE)
+        score_value2 = FONT.render(f"{hero2.score}", False, BLUE)
+        screen.blit(score2, (885, 500))
+        screen.blit(score_value2, (885, 550))
+
     def get_enemy_image(difficulty):
-        black = pygame.Color("black")
+        black = pygame.color.Color((0, 0, 0))
         if difficulty == '0':
             image = pygame.Surface((33, 24))
             image.fill(black)
@@ -148,19 +161,57 @@ def space_invaders_loop(screen):
         image.set_colorkey(image.get_at((0, 0)))
         return image
 
-    def load_level():
-        nonlocal current_level
-        current_level += 1
-        enemies_group.my_clear()
-        for x in range(260 + (600 // 12 - 18), 260 + 600 - 18, 600 // 12):
-            col = (x - 260) // (600 // 12)
-            for y in range(100 + (200 // 6 - 12), 100 + 200 - 18, 200 // 6):
-                row = (y - 100) // (200 // 6)
-                enemies_group.my_add(Enemy(
-                    x, y, levels[current_level][col][row], col), col)
-
     def game_over():
-        pass
+        nonlocal current_level, back_to_menu, hero1, hero2
+        game_over_group = pygame.sprite.Group()
+        game_over_sprite = pygame.sprite.Sprite(game_over_group)
+        game_over_sprite.image = pygame.Surface((1120, 630))
+        game_over_sprite.image.fill((0, 0, 0))
+        font = pygame.font.Font("../data/DePixelHalbfett.otf", 100)
+        game = font.render("GAME", False, (0, 255, 0))
+        game_over_sprite.image.blit(game, (362, 80))
+        over = font.render("OVER", False, (0, 255, 0))
+        game_over_sprite.image.blit(over, (384, 205))
+        enter = FONT.render("Press 'Enter' to restart game", False, (0, 255, 0))
+        game_over_sprite.image.blit(enter, (296, 360))
+        escape = FONT.render("Press 'Esc' to back to main menu", False, (0, 255, 0))
+        game_over_sprite.image.blit(escape, (269, 450))
+
+        score1 = FONT.render("P1 SCORE:", False, (255, 0, 0))
+        score_value1 = FONT.render(f"{hero1.score}", False, (255, 0, 0))
+        x1 = (score1.get_width() // 2) - (score_value1.get_width() // 2) + 99
+        game_over_sprite.image.blit(score1, (99, 100))
+        game_over_sprite.image.blit(score_value1, (x1, 150))
+        score2 = FONT.render("P2 SCORE:", False, (0, 0, 255))
+        score_value2 = FONT.render(f"{hero2.score}", False, (0, 0, 255))
+        game_over_sprite.image.blit(score2, (883, 100))
+        x2 = (score2.get_width() // 2) - (score_value2.get_width() // 2) + 883
+        game_over_sprite.image.blit(score_value2, (x2, 150))
+        game_over_sprite.rect = pygame.Rect(0, -630, 1120, 630)
+
+        MOVEGAMEOVERSCREEN = pygame.USEREVENT + 128
+        pygame.time.set_timer(MOVEGAMEOVERSCREEN, 100)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == MOVEGAMEOVERSCREEN:
+                    if game_over_sprite.rect.y < 0:
+                        game_over_sprite.rect = game_over_sprite.rect.move(0, 18)
+                if event.type == pygame.KEYDOWN:
+                    print(event.key)
+                    if event.key == 13:
+                        current_level = -1
+                        hero1 = Hero(410, 560, RED, hero1_group)
+                        hero2 = Hero(710, 560, BLUE, hero2_group)
+                        return
+                    if event.key == pygame.K_ESCAPE:
+                        back_to_menu = True
+                        return
+            game_over_group.draw(screen)
+            pygame.display.flip()
 
     class Wall(pygame.sprite.Sprite):
         def __init__(self, x, y, w, h):
@@ -176,8 +227,9 @@ def space_invaders_loop(screen):
             super(Hero, self).__init__(group, all_sprites)
             self.image = get_hero_image(color)
             self.rect = pygame.Rect(x, y, 45, 45)
-            self.live_count = 2
+            self.live_count = 3
             self.bullet = None
+            self.score = 0
 
         def move(self, direction):
             if direction in (pygame.K_LEFT, 97):
@@ -218,6 +270,23 @@ def space_invaders_loop(screen):
                 self.kill()
             enemy_collides = pygame.sprite.spritecollideany(self, enemies_group)
             if enemy_collides:
+                print(f"{enemy_collides.difficulty=}")
+                if enemy_collides.difficulty == '0':
+                    self.cannon.score += 10
+                    if self.cannon.score % 500 == 0:
+                        self.cannon.live_count = min(3,
+                                                     self.cannon.live_count + 1)
+                elif enemy_collides.difficulty == '1':
+                    self.cannon.score += 20
+                    if self.cannon.score % 500 == 0:
+                        self.cannon.live_count = min(3,
+                                                     self.cannon.live_count + 1)
+                elif enemy_collides.difficulty == '2':
+                    self.cannon.score += 30
+                    if self.cannon.score % 500 == 0:
+                        self.cannon.live_count = min(3,
+                                                     self.cannon.live_count + 1)
+                print(f'{self.cannon.score=}')
                 self.cannon.bullet = None
                 self.kill()
                 enemies_group.enemies[enemy_collides.column].pop(enemy_collides.row)
@@ -254,6 +323,7 @@ def space_invaders_loop(screen):
             self.row = None
             self.my_group = enemies_group
             self.is_first = False
+            self.rocket = None
 
         def update(self):
             self.rect = self.rect.move(
@@ -262,25 +332,107 @@ def space_invaders_loop(screen):
             if pygame.sprite.spritecollideany(self, bottom_wall_group):
                 game_over()
 
-    class Rocket(pygame.sprite.Sprite):
-        def __init__(self, x, y, enemy, group):
-            super(Rocket, self).__init__(all_sprites, rocket_group)
-            self.image = pygame.Surface()
+        def shoot(self):
+            if self.rocket is not None:
+                return
+            if not self.is_first:
+                return
+            if random.random() > (
+                    0.5 if self.difficulty == '2' else
+                    0.25 if self.difficulty == '1' else 0.125):
+                return
+            self.rocket = Rocket(self.rect.x + 18 - 1.5, self.rect.y + 24,
+                                 self)
 
-    for x in range(260 + (600 // 5 - 33), 260 + 600 - 33, 600 // 5):
-        for x1 in range(x, x + 18, 3):  # 1st layer
-            Shield(x1, 500)
-            Shield(x1 + 48, 500)
-        for _ in range(4):  # 2-5 layers
-            for x1 in range(x, x + (3 * (_ + 6)), 3):
-                Shield(x1, 500 - (3 * (_ + 1)))
-                Shield(x1 + 48 - _ * 3, 500 - (3 * (_ + 1)))
-        for _ in range(5):  # 6-10 layers
-            for x1 in range(x, x + 66, 3):
-                Shield(x1, 500 - 15 - (_ * 3))
-        for _ in range(4):
-            for x1 in range(x + ((_ + 1) * 3), x + 63 - (_ * 3), 3):
-                Shield(x1, 500 - 30 - (_ * 3))
+    class Rocket(pygame.sprite.Sprite):
+        def __init__(self, x, y, enemy):
+            super(Rocket, self).__init__(all_sprites, rocket_group)
+            self.image = pygame.Surface((9, 18))
+            self.image.fill((0, 0, 0))
+            pygame.draw.rect(self.image, (255, 255, 255), (3, 0, 3, 18))
+            pygame.draw.rect(self.image, (255, 255, 255), (6, 0, 3, 3))
+            pygame.draw.rect(self.image, (255, 255, 255), (0, 3, 3, 3))
+            pygame.draw.rect(self.image, (255, 255, 255), (0, 12, 3, 3))
+            pygame.draw.rect(self.image, (255, 255, 255), (6, 9, 3, 3))
+            self.image.set_colorkey(self.image.get_at((0, 0)))
+            self.rect = pygame.Rect(x, y, 9, 18)
+            self.enemy = enemy
+            self.radius = int(self.enemy.difficulty) * 3 + 9
+
+        def update(self):
+            self.rect = self.rect.move(0, 3)
+            if self.rect.y > 592:
+                self.enemy.rocket = None
+                self.kill()
+            if pygame.sprite.spritecollideany(self, shields_group):
+                pygame.sprite.spritecollide(
+                    self, shields_group, True,
+                    pygame.sprite.collide_circle_ratio(1))
+                for _ in range(1, 2 if self.enemy.difficulty == '0' else
+                               3 if self.enemy.difficulty == '1' else 4):
+                    for shield_sprite in pygame.sprite.spritecollide(
+                            self, shields_group, False,
+                            pygame.sprite.collide_circle_ratio(
+                                (self.radius + 3) / self.radius)):
+                        if random.random() <= (1 / (_ * 2)):
+                            shield_sprite.kill()
+                self.enemy.rocket = None
+                self.kill()
+            if pygame.sprite.collide_mask(self, hero1):
+                hero1.live_count -= 1
+                if hero1.live_count <= 0:
+                    hero1.kill()
+                self.enemy.rocket = None
+                self.kill()
+            if pygame.sprite.collide_mask(self, hero2):
+                hero2.live_count -= 1
+                if hero2.live_count <= 0:
+                    hero2.kill()
+                self.enemy.rocket = None
+                self.kill()
+
+    def load_level():
+        nonlocal current_level
+        screen.fill((0, 0, 0))
+        current_level += 1
+        enemies_group.my_clear()
+        if current_level <= 11:
+            for x in range(260 + (600 // 12 - 18), 260 + 600 - 18, 600 // 12):
+                col = (x - 260) // (600 // 12)
+                for y in range(100 + (200 // 6 - 12), 100 + 200 - 18, 200 // 6):
+                    row = (y - 100) // (200 // 6)
+                    enemies_group.my_add(Enemy(
+                        x, y, levels[current_level][col][row], col), col)
+        else:
+            for x in range(260 + (600 // 12 - 18), 260 + 600 - 18, 600 // 12):
+                col = (x - 260) // (600 // 12)
+                for y in range(100 + (200 // 6 - 12), 100 + 200 - 18, 200 // 6):
+                    row = (y - 100) // (200 // 6)
+                    enemies_group.my_add(Enemy(
+                        x, y, last_level[col][row], col), col)
+        for i in bullets_group:
+            i.cannon.bullet = None
+            i.kill()
+        for i in rocket_group:
+            i.enemy.rocket = None
+            i.kill()
+        if current_level % 3 == 0:
+            for i in shields_group.sprites():
+                i.kill()
+            for x in range(260 + (600 // 5 - 33), 260 + 600 - 33, 600 // 5):
+                for x1 in range(x, x + 18, 3):  # 1st layer
+                    Shield(x1, 500)
+                    Shield(x1 + 48, 500)
+                for _ in range(4):  # 2-5 layers
+                    for x1 in range(x, x + (3 * (_ + 6)), 3):
+                        Shield(x1, 500 - (3 * (_ + 1)))
+                        Shield(x1 + 48 - _ * 3, 500 - (3 * (_ + 1)))
+                for _ in range(5):  # 6-10 layers
+                    for x1 in range(x, x + 66, 3):
+                        Shield(x1, 500 - 15 - (_ * 3))
+                for _ in range(4):
+                    for x1 in range(x + ((_ + 1) * 3), x + 63 - (_ * 3), 3):
+                        Shield(x1, 500 - 30 - (_ * 3))
 
     vertical_walls_group = pygame.sprite.Group()
     left_wall_sprite = Wall(245, 15, 5, 600)
@@ -289,11 +441,10 @@ def space_invaders_loop(screen):
     bottom_wall_sprite = pygame.sprite.Sprite(bottom_wall_group)
     bottom_wall_sprite.rect = pygame.Rect(250, 610, 620, 5)
 
-    hero1 = Hero(710, 560, BLUE, hero1_group)
-    hero2 = Hero(410, 560, RED, hero2_group)
+    hero1 = Hero(410, 560, RED, hero1_group)
+    hero2 = Hero(710, 560, BLUE, hero2_group)
 
     load_level()
-    print([[j.is_first for j in i] for i in enemies_group.enemies])
 
     PLAYERSMOVEEVENT = pygame.USEREVENT + 123
     pygame.time.set_timer(PLAYERSMOVEEVENT, 15)
@@ -301,10 +452,19 @@ def space_invaders_loop(screen):
     BULLETMOVEEVENT = pygame.USEREVENT + 124
     pygame.time.set_timer(BULLETMOVEEVENT, 10)
 
-    ENEMYMOVEEVENT = pygame.USEREVENT + 125
+    ROCKETMOVEEVENT = pygame.USEREVENT + 125
+    pygame.time.set_timer(ROCKETMOVEEVENT, 20)
+
+    ENEMYMOVEEVENT = pygame.USEREVENT + 126
     pygame.time.set_timer(ENEMYMOVEEVENT, 100)
 
+    ENEMYSHOOTEVENT = pygame.USEREVENT + 127
+    pygame.time.set_timer(ENEMYSHOOTEVENT, 1000)
+
     while True:
+        if back_to_menu:
+            screen.fill((0, 0, 0))
+            return
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -314,30 +474,46 @@ def space_invaders_loop(screen):
                 if event.key == pygame.K_ESCAPE:
                     return
                 if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
-                    hero1.move(event.key)
-                if event.key in (97, 100):
                     hero2.move(event.key)
+                if event.key in (97, 100):
+                    hero1.move(event.key)
                 if event.key == 119:
-                    hero2.shoot()
+                    if hero1.live_count > 0:
+                        hero1.shoot()
                 if event.key == pygame.K_UP:
-                    hero1.shoot()
+                    if hero2.live_count > 0:
+                        hero2.shoot()
             if event.type == PLAYERSMOVEEVENT:
                 pressed_keys = pygame.key.get_pressed()
                 if pressed_keys[pygame.K_LEFT]:
-                    hero1.move(pygame.K_LEFT)
+                    hero2.move(pygame.K_LEFT)
                 if pressed_keys[pygame.K_RIGHT]:
-                    hero1.move(pygame.K_RIGHT)
+                    hero2.move(pygame.K_RIGHT)
                 if pressed_keys[97]:
-                    hero2.move(97)
+                    hero1.move(97)
                 if pressed_keys[100]:
-                    hero2.move(100)
+                    hero1.move(100)
             if event.type == BULLETMOVEEVENT:
                 bullets_group.update()
+            if event.type == ROCKETMOVEEVENT:
+                rocket_group.update()
             if event.type == ENEMYMOVEEVENT:
                 enemies_group.update()
+            if event.type == ENEMYSHOOTEVENT:
+                for enemy in enemies_group:
+                    enemy.shoot()
         screen.fill((0, 0, 0))
         vertical_walls_group.update()
         draw_field()
         draw_heroes_hp()
+        draw_score()
         all_sprites.draw(screen)
+        if hero1.live_count <= 0 and hero2.live_count <= 0:
+            game_over()
+            if back_to_menu:
+                screen.fill((0, 0, 0))
+                return
+            load_level()
+        if not (enemies_group.sprites()):
+            load_level()
         pygame.display.flip()
