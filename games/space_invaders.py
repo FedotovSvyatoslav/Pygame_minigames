@@ -12,9 +12,9 @@ def space_invaders_loop(screen):
     BLUE = pygame.Color('blue')
     RED = pygame.Color('red')
     GREEN = pygame.Color('green')
-    FONT = pygame.font.Font("../data/DePixelHalbfett.otf", 30)
+    FONT = pygame.font.Font("data/DePixelHalbfett.otf", 30)
 
-    with open("../data/space_invaders_levels.txt", 'rt') as levels_file:
+    with open("data/space_invaders_levels.txt", 'rt') as levels_file:
         data = levels_file.readlines()
         levels = [[j.split(",") for j in i.strip('\n').split(";")]
                   for i in data]
@@ -156,7 +156,6 @@ def space_invaders_loop(screen):
             pygame.draw.rect(image, GREEN, (15, 21, 3, 3))
             pygame.draw.rect(image, GREEN, (21, 21, 3, 3))
         else:
-            print(f'{difficulty=}')
             image = pygame.Surface(36, 24)
         image.set_colorkey(image.get_at((0, 0)))
         return image
@@ -167,7 +166,7 @@ def space_invaders_loop(screen):
         game_over_sprite = pygame.sprite.Sprite(game_over_group)
         game_over_sprite.image = pygame.Surface((1120, 630))
         game_over_sprite.image.fill((0, 0, 0))
-        font = pygame.font.Font("../data/DePixelHalbfett.otf", 100)
+        font = pygame.font.Font("data/DePixelHalbfett.otf", 100)
         game = font.render("GAME", False, (0, 255, 0))
         game_over_sprite.image.blit(game, (362, 80))
         over = font.render("OVER", False, (0, 255, 0))
@@ -201,7 +200,6 @@ def space_invaders_loop(screen):
                     if game_over_sprite.rect.y < 0:
                         game_over_sprite.rect = game_over_sprite.rect.move(0, 18)
                 if event.type == pygame.KEYDOWN:
-                    print(event.key)
                     if event.key == 13:
                         current_level = -1
                         hero1 = Hero(410, 560, RED, hero1_group)
@@ -270,7 +268,6 @@ def space_invaders_loop(screen):
                 self.kill()
             enemy_collides = pygame.sprite.spritecollideany(self, enemies_group)
             if enemy_collides:
-                print(f"{enemy_collides.difficulty=}")
                 if enemy_collides.difficulty == '0':
                     self.cannon.score += 10
                     if self.cannon.score % 500 == 0:
@@ -286,7 +283,6 @@ def space_invaders_loop(screen):
                     if self.cannon.score % 500 == 0:
                         self.cannon.live_count = min(3,
                                                      self.cannon.live_count + 1)
-                print(f'{self.cannon.score=}')
                 self.cannon.bullet = None
                 self.kill()
                 enemies_group.enemies[enemy_collides.column].pop(enemy_collides.row)
@@ -303,7 +299,6 @@ def space_invaders_loop(screen):
                         enemies_group.enemies[i][j].row = j
                 enemy_collides.kill()
                 enemies_group.set_shooters()
-                print([[j.is_first for j in i] for i in enemies_group.enemies])
 
     class Shield(pygame.sprite.Sprite):
         def __init__(self, x, y):
@@ -470,7 +465,6 @@ def space_invaders_loop(screen):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                print(event.key)
                 if event.key == pygame.K_ESCAPE:
                     return
                 if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
