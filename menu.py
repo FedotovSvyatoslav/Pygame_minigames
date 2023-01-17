@@ -4,6 +4,7 @@ import useful
 from useful import Button, load_image, terminate
 
 pygame.init()
+pygame.mixer.init()
 FPS = 50
 SIZE = WIDTH, HEIGHT = 1120, 630
 screen = pygame.display.set_mode(SIZE)

@@ -5,6 +5,7 @@ import sys
 import pygame
 
 pygame.init()
+pygame.mixer.init()
 
 
 def space_invaders_loop(screen):
@@ -13,6 +14,14 @@ def space_invaders_loop(screen):
     RED = pygame.Color('red')
     GREEN = pygame.Color('green')
     FONT = pygame.font.Font("data/DePixelHalbfett.otf", 30)
+
+    shoot_sound = pygame.mixer.Sound("data/shoot.wav")
+    shoot_sound.set_volume(0.05)
+    player_explosion_sound = pygame.mixer.Sound("data/explosion.wav")
+    player_explosion_sound.set_volume(0.5)
+    enemy_killed_sound = pygame.mixer.Sound("data/invaderkilled.wav")
+    enemy_killed_sound.set_volume(0.5)
+    game_over_sound = pygame.mixer.Sound("data/gameover.wav")
 
     with open("data/space_invaders_levels.txt", 'rt') as levels_file:
         data = levels_file.readlines()
@@ -243,6 +252,7 @@ def space_invaders_loop(screen):
             if self.bullet is not None:
                 return
             self.bullet = Bullet(self.rect.x + 21, self.rect.y - 6, self)
+            shoot_sound.play()
 
     class Bullet(pygame.sprite.Sprite):
         def __init__(self, x, y, cannon):
@@ -285,6 +295,7 @@ def space_invaders_loop(screen):
                                                      self.cannon.live_count + 1)
                 self.cannon.bullet = None
                 self.kill()
+                enemy_killed_sound.play()
                 enemies_group.enemies[enemy_collides.column].pop(enemy_collides.row)
                 for i in range(len(enemies_group.enemies[enemy_collides.column])):
                     enemies_group.enemies[enemy_collides.column][i].row = i
@@ -325,6 +336,7 @@ def space_invaders_loop(screen):
                 (3 + (current_level // 5) * 3) * self.my_group.direction, 0)
             pygame.sprite.spritecollide(self, shields_group, True)
             if pygame.sprite.spritecollideany(self, bottom_wall_group):
+                game_over_sound.play()
                 game_over()
 
         def shoot(self):
@@ -374,12 +386,14 @@ def space_invaders_loop(screen):
                 self.enemy.rocket = None
                 self.kill()
             if pygame.sprite.collide_mask(self, hero1):
+                player_explosion_sound.play()
                 hero1.live_count -= 1
                 if hero1.live_count <= 0:
                     hero1.kill()
                 self.enemy.rocket = None
                 self.kill()
             if pygame.sprite.collide_mask(self, hero2):
+                player_explosion_sound.play()
                 hero2.live_count -= 1
                 if hero2.live_count <= 0:
                     hero2.kill()
@@ -504,6 +518,7 @@ def space_invaders_loop(screen):
         draw_score()
         all_sprites.draw(screen)
         if hero1.live_count <= 0 and hero2.live_count <= 0:
+            game_over_sound.play()
             game_over()
             if back_to_menu:
                 screen.fill((0, 0, 0))
