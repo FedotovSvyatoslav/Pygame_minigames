@@ -7,6 +7,7 @@ from useful import load_image, terminate, Button, Text
 
 
 pygame.init()
+pygame.mixer.init()
 FPS = 30
 SIZE = WIDTH, HEIGHT = 1120, 630
 screen = pygame.display.set_mode(SIZE)
@@ -74,6 +75,8 @@ class Game:
 
 def start_game(screen):
     screen.fill((255, 255, 255))
+    roll_sound = pygame.mixer.Sound("data/roll dice.mp3")
+    drop_sound = pygame.mixer.Sound("data/drop dice.mp3")
     play_btn = Button((490, 200), "play2.png", (170, 100), all_sprites)
     text_manager.add_text("Очки игрока 1", (0, 0, 0), 70, 30, 10, "txt")
     text_manager.add_text("Очки игрока 2", (0, 0, 0), 70, 720, 10, "txt2")
@@ -103,6 +106,7 @@ def start_game(screen):
                     screen.fill((0, 0, 0))
                     return
             if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.mixer.stop()
                 if exit_btn.click(event.pos):
                     running = False
                     round_is_play = False
@@ -119,6 +123,7 @@ def start_game(screen):
                     play_btn.kill()
                     play_btn.killed = True
                 try:
+                    roll_sound.play()
                     if cont.click(event.pos):
                         dice.round_ended = False
                         point = game.play_round()
@@ -135,6 +140,7 @@ def start_game(screen):
                     pass
 
             if event.type == stop_rotate:
+                roll_sound.stop()
                 if dice.round_ended or not round_is_play:
                     continue
                 if game.turn == 0:
@@ -151,6 +157,7 @@ def start_game(screen):
                     text_manager.remove_text("score2")
                     text_manager.add_text(f"{game.point_2 + point}", (0, 0, 0), 70, 830, 50, "score2")
                     game.point_2 += point
+                drop_sound.play()
                 dice.round_ended = True
                 dice.point = point
                 cont = useful.Text_Button("Продолжить", (430, 300), 50, screen)
