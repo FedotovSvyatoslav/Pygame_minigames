@@ -111,7 +111,7 @@ def space_invaders_loop(screen):
         screen.blit(score_value2, (885, 550))
 
     def get_enemy_image(difficulty):
-        black = pygame.color.Color((0, 0, 0))
+        black = pygame.Color("black")
         if difficulty == '0':
             image = pygame.Surface((33, 24))
             image.fill(black)
