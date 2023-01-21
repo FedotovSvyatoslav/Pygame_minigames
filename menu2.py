@@ -6,7 +6,6 @@ import games
 from games import pong
 from useful import Button, terminate, load_image
 
-
 SIZE = WIDTH, HEIGHT = 1120, 630
 buttons = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -16,22 +15,20 @@ FPS = 50
 def menu2(screen):
     screen.fill((255, 255, 255))
 
-
     fon = pygame.transform.scale(load_image("bg2.jpg"), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    text = "Выберете игру"
+    text = "Выберите игру"
     font = pygame.font.Font(None, 70)
-    string_render = font.render(text, 1, (153, 153, 102))
+    string_render = font.render(text, True, (153, 153, 102))
     intro_rect = string_render.get_rect()
     intro_rect.x = 400
     intro_rect.top = 20
     screen.blit(string_render, intro_rect)
 
-    dice_icon = Button((710, 70), "dice.png", (440, 315), buttons)
-    chess_icon = Button((340, 70), "chess.png", (420, 315), buttons)
-    pong_icon = Button((20, 140), "pong.png", (330, 185), buttons)
-    voll_icon = Button((40, 260), "voleyball.png", (500, 360), buttons)
+    dice_icon = Button((610, 70), "dice.png", (440, 315), buttons)
+    chess_icon = Button((140, 70), "chess.png", (420, 315), buttons)
+    pong_icon = Button((120, 340), "pong.png", (330, 185), buttons)
     space_icon = Button((520, 260), "space.png", (560, 360), buttons)
 
     running = True
@@ -47,13 +44,13 @@ def menu2(screen):
                     games.dice.start_game(screen)
                 if chess_icon.click(event.pos):
                     games.chess_loop(screen)
-                if voll_icon.click(event.pos):
-                    pass
                 if pong_icon.click(event.pos):
                     pong.start_game(screen)
                 if space_icon.click(event.pos):
                     space_invaders.space_invaders_loop(screen)
 
+        screen.blit(fon, (0, 0))
+        screen.blit(string_render, intro_rect)
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
