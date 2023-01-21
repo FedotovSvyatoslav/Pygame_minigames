@@ -1,6 +1,2 @@
-changed .mp3 files to .wav
-add db with score to SI. Best score is now displayed on game over screen
-db creates on 1st run
-add sql_scripts folder with .sql files
-add sqls.py file with db handlings
-some changes to compliance with pep8
+add .exe file
+рядом с .exe файлом обязательно должны быть папки data и sql_scripts
