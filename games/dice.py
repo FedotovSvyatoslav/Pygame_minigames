@@ -75,8 +75,8 @@ class Game:
 
 def start_game(screen):
     screen.fill((255, 255, 255))
-    roll_sound = pygame.mixer.Sound("data/roll dice.mp3")
-    drop_sound = pygame.mixer.Sound("data/drop dice.mp3")
+    roll_sound = pygame.mixer.Sound("data/roll-dice.wav")
+    drop_sound = pygame.mixer.Sound("data/drop-dice.wav")
     play_btn = Button((490, 200), "play2.png", (170, 100), all_sprites)
     text_manager.add_text("Очки игрока 1", (0, 0, 0), 70, 30, 10, "txt")
     text_manager.add_text("Очки игрока 2", (0, 0, 0), 70, 720, 10, "txt2")

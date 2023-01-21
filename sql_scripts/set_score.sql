@@ -1,0 +1,2 @@
+update score
+set value = ?

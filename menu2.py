@@ -6,7 +6,6 @@ import games
 from games import pong
 from useful import Button, terminate, load_image
 
-
 SIZE = WIDTH, HEIGHT = 1120, 630
 buttons = pygame.sprite.Group()
 clock = pygame.time.Clock()
@@ -16,13 +15,12 @@ FPS = 50
 def menu2(screen):
     screen.fill((255, 255, 255))
 
-
     fon = pygame.transform.scale(load_image("bg2.jpg"), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
     text = "Выберете игру"
     font = pygame.font.Font(None, 70)
-    string_render = font.render(text, 1, (153, 153, 102))
+    string_render = font.render(text, True, (153, 153, 102))
     intro_rect = string_render.get_rect()
     intro_rect.x = 400
     intro_rect.top = 20
@@ -50,9 +48,11 @@ def menu2(screen):
                 if voll_icon.click(event.pos):
                     pass
                 if pong_icon.click(event.pos):
-                    pong.start_game(screen)
+                    games.pong.start_game(screen)
+                    # pong.start_game(screen)
                 if space_icon.click(event.pos):
-                    space_invaders.space_invaders_loop(screen)
+                    games.space_invaders.space_invaders_loop(screen)
+                    # space_invaders.space_invaders_loop(screen)
 
         buttons.draw(screen)
         pygame.display.flip()

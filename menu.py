@@ -1,7 +1,12 @@
+import os
+
 import pygame
 import menu2
+import sqls
 import useful
 from useful import Button, load_image, terminate
+
+DB_NAME = "score.db"
 
 pygame.init()
 pygame.mixer.init()
@@ -10,6 +15,11 @@ SIZE = WIDTH, HEIGHT = 1120, 630
 screen = pygame.display.set_mode(SIZE)
 buttons = pygame.sprite.Group()
 clock = pygame.time.Clock()
+
+if not os.path.exists(DB_NAME):
+    with open(DB_NAME, 'a') as db_file:
+        pass
+    sqls.create_table_and_add_row(DB_NAME)
 
 
 def start_screen():
@@ -29,11 +39,10 @@ def start_screen():
                 if button_info.click(event.pos):
                     menu2.info()
                     return
-
+        screen.blit(fon, (0, 0))
         buttons.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
-
 
 
 start_screen()
