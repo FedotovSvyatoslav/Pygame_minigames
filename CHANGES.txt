@@ -1,2 +1,0 @@
-add .exe file
-рядом с .exe файлом обязательно должны быть папки data и sql_scripts
