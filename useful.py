@@ -28,7 +28,7 @@ class Button(pygame.sprite.Sprite):
             return
         if self.rect.collidepoint(pos[0], pos[1]):
             return True
-        return  False
+        return False
 
 
 class Text:
@@ -36,9 +36,9 @@ class Text:
         self.texts = {}
         self.screen = screen
 
-    def add_text(self, text, color, font,  x, y, name):
+    def add_text(self, text, color, font, x, y, name):
         font = pygame.font.Font(None, font)
-        string_render = font.render(text, 1, color)
+        string_render = font.render(text, True, color)
         intro_rect = string_render.get_rect()
         intro_rect.x = x
         intro_rect.y = y
@@ -85,6 +85,7 @@ class Text_Button:
         x, y = pygame.mouse.get_pos()
         if self.rect.collidepoint(x, y):
             return True
+
 
 def terminate():
     pygame.quit()

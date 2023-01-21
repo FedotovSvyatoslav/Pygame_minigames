@@ -4,6 +4,8 @@ import sys
 
 import pygame
 
+import sqls
+
 pygame.init()
 pygame.mixer.init()
 
@@ -176,29 +178,41 @@ def space_invaders_loop(screen):
         game_over_sprite.image = pygame.Surface((1120, 630))
         game_over_sprite.image.fill((0, 0, 0))
         font = pygame.font.Font("data/DePixelHalbfett.otf", 100)
-        game = font.render("GAME", False, (0, 255, 0))
-        game_over_sprite.image.blit(game, (362, 80))
-        over = font.render("OVER", False, (0, 255, 0))
-        game_over_sprite.image.blit(over, (384, 205))
+        game = font.render("GAME", False, GREEN)
+        game_over_sprite.image.blit(game, (362, 180))
+        over = font.render("OVER", False, GREEN)
+        game_over_sprite.image.blit(over, (384, 305))
         enter = FONT.render("Press 'Enter' to restart game", False, (0, 255, 0))
-        game_over_sprite.image.blit(enter, (296, 360))
+        game_over_sprite.image.blit(enter, (296, 460))
         escape = FONT.render("Press 'Esc' to back to main menu", False, (0, 255, 0))
-        game_over_sprite.image.blit(escape, (269, 450))
+        game_over_sprite.image.blit(escape, (269, 550))
 
-        score1 = FONT.render("P1 SCORE:", False, (255, 0, 0))
-        score_value1 = FONT.render(f"{hero1.score}", False, (255, 0, 0))
-        x1 = (score1.get_width() // 2) - (score_value1.get_width() // 2) + 99
-        game_over_sprite.image.blit(score1, (99, 100))
-        game_over_sprite.image.blit(score_value1, (x1, 150))
-        score2 = FONT.render("P2 SCORE:", False, (0, 0, 255))
-        score_value2 = FONT.render(f"{hero2.score}", False, (0, 0, 255))
-        game_over_sprite.image.blit(score2, (883, 100))
-        x2 = (score2.get_width() // 2) - (score_value2.get_width() // 2) + 883
-        game_over_sprite.image.blit(score_value2, (x2, 150))
+        score1 = FONT.render("P1 SCORE:", False, RED)
+        score_value1 = FONT.render(f"{hero1.score}", False, RED)
+        x1 = (score1.get_width() // 2) - (score_value1.get_width() // 2) + 84
+        game_over_sprite.image.blit(score1, (84, 50))
+        game_over_sprite.image.blit(score_value1, (x1, 100))
+        score2 = FONT.render("P2 SCORE:", False, BLUE)
+        score_value2 = FONT.render(f"{hero2.score}", False, BLUE)
+        game_over_sprite.image.blit(score2, (840, 50))
+        x2 = (score2.get_width() // 2) - (score_value2.get_width() // 2) + 840
+        game_over_sprite.image.blit(score_value2, (x2, 100))
         game_over_sprite.rect = pygame.Rect(0, -630, 1120, 630)
 
         MOVEGAMEOVERSCREEN = pygame.USEREVENT + 128
         pygame.time.set_timer(MOVEGAMEOVERSCREEN, 100)
+
+        max_score = sqls.get_score("score.db")[0][0]
+        new_max_score = max(
+            ((0 if max_score is None else max_score), hero1.score, hero2.score
+             ))
+        sqls.set_score("score.db", new_max_score)
+
+        m_score_text = FONT.render(f"BEST SCORE", False, GREEN)
+        m_score_val = FONT.render(f"{new_max_score}", False, GREEN)
+        game_over_sprite.image.blit(m_score_text, (445, 50))
+        x3 = (m_score_text.get_width() // 2) - (m_score_val.get_width() // 2) + 445
+        game_over_sprite.image.blit(m_score_val, (x3, 100))
 
         while True:
             for event in pygame.event.get():
