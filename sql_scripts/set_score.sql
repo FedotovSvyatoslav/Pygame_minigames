@@ -1,2 +1,0 @@
-update score
-set value = ?
